@@ -1,0 +1,14 @@
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: ClusterClaim
+metadata:
+  name: cluster-01
+spec:
+  id: cluster-01
+  compositionSelector:
+    matchLabels:
+      provider: google-official
+      cluster: gke
+  parameters:
+    nodeSize: small
+    minNodeCount: 1
