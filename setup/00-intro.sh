@@ -4,7 +4,7 @@ set -e
 gum style \
 	--foreground 212 --border-foreground 212 --border double \
 	--margin "1 2" --padding "2 4" \
-	'Setup for the Security chapter.
+	'Setup for the Introduction chapter.
   
 This script assumes that you jumped straight into this chapter.
 If that is not the case (if you are continuing from the previous
