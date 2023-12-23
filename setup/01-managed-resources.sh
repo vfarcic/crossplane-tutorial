@@ -4,7 +4,7 @@ set -e
 gum style \
 	--foreground 212 --border-foreground 212 --border double \
 	--margin "1 2" --padding "2 4" \
-	'Setup for the Introduction chapter.
+	'Setup for the Managed Resources chapter.
   
 This script assumes that you jumped straight into this chapter.
 If that is not the case (if you are continuing from the previous
@@ -25,8 +25,6 @@ echo "
 |Docker          |Yes                  |'https://docs.docker.com/engine/install'           |
 |kind CLI        |Yes                  |'https://kind.sigs.k8s.io/docs/user/quick-start/#installation'|
 |kubectl CLI     |Yes                  |'https://kubernetes.io/docs/tasks/tools/#kubectl'  |
-|crossplane CLI  |Yes                  |'https://docs.crossplane.io/latest/cli'            |
-|yq CLI          |Yes                  |'https://github.com/mikefarah/yq#install'          |
 |Google Cloud account with admin permissions|If using Google Cloud|'https://cloud.google.com'|
 |Google Cloud CLI|If using Google Cloud|'https://cloud.google.com/sdk/docs/install'        |
 |AWS account with admin permissions|If using AWS|'https://aws.amazon.com'                  |
@@ -40,6 +38,8 @@ gum confirm "
 Do you have those tools installed?
 " || exit 0
 
+rm -f .env
+
 #########################
 # Control Plane Cluster #
 #########################
@@ -50,37 +50,12 @@ kind create cluster
 # Crossplane #
 ##############
 
-helm upgrade --install crossplane crossplane \
-    --repo https://charts.crossplane.io/stable \
-    --namespace crossplane-system --create-namespace --wait
-
-kubectl apply \
-    --filename providers/provider-kubernetes-incluster.yaml
-
-kubectl apply --filename providers/provider-helm-incluster.yaml
-
-kubectl apply --filename providers/dot-kubernetes.yaml
-
-kubectl apply --filename providers/dot-sql.yaml
-
-kubectl apply --filename providers/dot-app.yaml
-
-gum spin --spinner dot \
-    --title "Waiting for Crossplane providers..." -- sleep 60
-
-kubectl wait --for=condition=healthy provider.pkg.crossplane.io \
-    --all --timeout=600s
-
 echo "
 Which Hyperscaler do you want to use?"
 
 HYPERSCALER=$(gum choose "google" "aws" "azure")
 
 echo "export HYPERSCALER=$HYPERSCALER" >> .env
-
-export KUBECONFIG=$PWD/kubeconfig.yaml
-
-echo "export KUBECONFIG=$KUBECONFIG" >> .env
 
 if [[ "$HYPERSCALER" == "google" ]]; then
 
@@ -154,20 +129,3 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 " >aws-creds.conf
 
 fi
-
-kubectl create namespace a-team
-
-###########
-# Argo CD #
-###########
-
-REPO_URL=$(git config --get remote.origin.url)
-
-yq --inplace ".spec.source.repoURL = \"$REPO_URL\"" argocd/apps.yaml
-
-helm upgrade --install argocd argo-cd \
-    --repo https://argoproj.github.io/argo-helm \
-    --namespace argocd --create-namespace \
-    --values argocd/helm-values.yaml --wait
-
-kubectl apply --filename argocd/apps.yaml
