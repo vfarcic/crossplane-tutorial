@@ -154,6 +154,4 @@ helm upgrade --install argocd argo-cd \
     --namespace argocd --create-namespace \
     --values argocd/helm-values.yaml --wait
 
-kubectl apply --filename argocd/project.yaml
-
 kubectl apply --filename argocd/apps.yaml

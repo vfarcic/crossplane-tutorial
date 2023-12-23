@@ -2,19 +2,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: production-apps
+  name: a-team-apps
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://github.com/vfarcic/cncf-demo
+    repoURL: https://github.com/vfarcic/crossplane-tutorial
     targetRevision: HEAD
     path: apps
   destination:
     server: https://kubernetes.default.svc
-    namespace: production
+    namespace: a-team
   syncPolicy:
     automated:
       selfHeal: true
@@ -24,19 +24,19 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: production-infra
+  name: a-team-infra
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://github.com/vfarcic/cncf-demo
+    repoURL: https://github.com/vfarcic/crossplane-tutorial
     targetRevision: HEAD
     path: infra
   destination:
     server: https://kubernetes.default.svc
-    namespace: production
+    namespace: a-team
   syncPolicy:
     automated:
       selfHeal: true
