@@ -1,0 +1,14 @@
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-azure-compute
+spec:
+  package: xpkg.upbound.io/upbound/provider-azure-compute:v0.39.0
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-azure-network
+spec:
+  package: xpkg.upbound.io/upbound/provider-azure-network:v0.39.0

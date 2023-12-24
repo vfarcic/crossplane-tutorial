@@ -25,6 +25,7 @@ echo "
 |Docker          |Yes                  |'https://docs.docker.com/engine/install'           |
 |kind CLI        |Yes                  |'https://kind.sigs.k8s.io/docs/user/quick-start/#installation'|
 |kubectl CLI     |Yes                  |'https://kubernetes.io/docs/tasks/tools/#kubectl'  |
+|yq CLI          |Yes                  |'https://github.com/mikefarah/yq#install'          |
 |Google Cloud account with admin permissions|If using Google Cloud|'https://cloud.google.com'|
 |Google Cloud CLI|If using Google Cloud|'https://cloud.google.com/sdk/docs/install'        |
 |AWS account with admin permissions|If using AWS|'https://aws.amazon.com'                  |
@@ -68,13 +69,7 @@ if [[ "$HYPERSCALER" == "google" ]]; then
     gcloud projects create ${PROJECT_ID}
 
     echo "
-Please open https://console.cloud.google.com/marketplace/product/google/container.googleapis.com?project=$PROJECT_ID in a browser and *ENABLE* the API."
-
-    gum input --placeholder "
-Press the enter key to continue."
-
-    echo "
-Please open https://console.cloud.google.com/apis/library/sqladmin.googleapis.com?project=${PROJECT_ID} in a browser and *ENABLE* the API."
+Please open https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=$PROJECT_ID in a browser and *ENABLE* the API."
 
     gum input --placeholder "
 Press the enter key to continue."
@@ -94,38 +89,36 @@ Press the enter key to continue."
     gcloud iam service-accounts keys create gcp-creds.json \
         --project $PROJECT_ID --iam-account $SA
 
-    kubectl --namespace crossplane-system \
-        create secret generic gcp-creds \
-        --from-file creds=./gcp-creds.json
-
-    echo "
-apiVersion: gcp.upbound.io/v1beta1
-kind: ProviderConfig
-metadata:
-  name: default
-spec:
-  projectID: $PROJECT_ID
-  credentials:
-    source: Secret
-    secretRef:
-      namespace: crossplane-system
-      name: gcp-creds
-      key: creds" | kubectl apply --filename -
+    yq --inplace ".spec.projectID = \"$PROJECT_ID\"" \
+        providers/google-config.yaml
 
 elif [[ "$HYPERSCALER" == "aws" ]]; then
 
-    AWS_ACCESS_KEY_ID=$(gum input --placeholder "AWS Access Key ID" --value "$AWS_ACCESS_KEY_ID")
+    AWS_ACCESS_KEY_ID=$(gum input \
+        --placeholder "AWS Access Key ID" \
+        --value "$AWS_ACCESS_KEY_ID")
     echo "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> .env
     
-    AWS_SECRET_ACCESS_KEY=$(gum input --placeholder "AWS Secret Access Key" --value "$AWS_SECRET_ACCESS_KEY" --password)
+    AWS_SECRET_ACCESS_KEY=$(gum input \
+        --placeholder "AWS Secret Access Key" \
+        --value "$AWS_SECRET_ACCESS_KEY" --password)
     echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env
 
-    AWS_ACCOUNT_ID=$(gum input --placeholder "AWS Account ID" --value "$AWS_ACCOUNT_ID")
+    AWS_ACCOUNT_ID=$(gum input --placeholder "AWS Account ID" \
+        --value "$AWS_ACCOUNT_ID")
     echo "export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> .env
 
     echo "[default]
 aws_access_key_id = $AWS_ACCESS_KEY_ID
 aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 " >aws-creds.conf
+
+else
+
+    export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+
+    az ad sp create-for-rbac --sdk-auth --role Owner \
+        --scopes /subscriptions/$SUBSCRIPTION_ID \
+        | tee azure-creds.json
 
 fi

@@ -25,6 +25,16 @@ gum confirm "
 Do you have those tools installed?
 " || exit 0
 
+###############
+# Hyperscaler #
+###############
+
+if [[ "$HYPERSCALER" == "google" ]]; then
+
+	gcloud projects delete $PROJECT_ID --quiet
+
+fi
+
 #########################
 # Control Plane Cluster #
 #########################
