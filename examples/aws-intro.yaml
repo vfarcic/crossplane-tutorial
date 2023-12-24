@@ -11,7 +11,7 @@ spec:
       cluster: eks
   parameters:
     nodeSize: small
-    minNodeCount: 1
+    minNodeCount: 3
 ---
 apiVersion: v1
 kind: Secret
