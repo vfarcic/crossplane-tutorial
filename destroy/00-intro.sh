@@ -4,12 +4,7 @@ set -e
 gum style \
 	--foreground 212 --border-foreground 212 --border double \
 	--margin "1 2" --padding "2 4" \
-	'Destruction of the Introduction chapter.
-  
-This script assumes that you jumped straight into this chapter.
-If that is not the case (if you are continuing from the previous
-chapter), please answer with "No" when asked whether you are
-ready to start.'
+	'Destruction of the Introduction chapter'
 
 gum confirm '
 Are you ready to start?
@@ -34,7 +29,7 @@ Do you have those tools installed?
 # Crossplane #
 ##############
 
-rm a-team/intro.yaml
+rm -f a-team/intro.yaml
 
 git add .
 

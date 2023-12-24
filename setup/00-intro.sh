@@ -40,6 +40,8 @@ gum confirm "
 Do you have those tools installed?
 " || exit 0
 
+rm -f .env
+
 #########################
 # Control Plane Cluster #
 #########################
@@ -157,6 +159,20 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
         --from-file creds=./aws-creds.conf
 
     kubectl apply --filename providers/aws-config.yaml
+
+else
+
+    RESOURCE_GROUP=dot-$(date +%Y%m%d%H%M%S)
+
+    echo "export RESOURCE_GROUP=$RESOURCE_GROUP" >> .env
+
+    export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+
+    az ad sp create-for-rbac --sdk-auth --role Owner --scopes /subscriptions/$SUBSCRIPTION_ID | tee azure-creds.json
+
+    kubectl --namespace crossplane-system create secret generic azure-creds --from-file creds=./azure-creds.json
+
+    kubectl apply --filename crossplane-config/provider-config-azure-official.yaml
 
 fi
 
