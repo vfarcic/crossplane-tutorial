@@ -8,5 +8,12 @@ configs:
   params:
     "server.insecure": true
 server:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - argocd.127.0.0.1.nip.io
   extraArgs:
-  - --insecure
+    - --insecure
+
+

@@ -44,7 +44,10 @@ Do you have those tools installed?
 # Control Plane Cluster #
 #########################
 
-kind create cluster
+kind create cluster --config kind.yaml
+
+kubectl apply \
+    --filename https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
 ##############
 # Crossplane #
@@ -77,10 +80,6 @@ Which Hyperscaler do you want to use?"
 HYPERSCALER=$(gum choose "google" "aws" "azure")
 
 echo "export HYPERSCALER=$HYPERSCALER" >> .env
-
-export KUBECONFIG=$PWD/kubeconfig.yaml
-
-echo "export KUBECONFIG=$KUBECONFIG" >> .env
 
 if [[ "$HYPERSCALER" == "google" ]]; then
 
@@ -153,6 +152,10 @@ aws_access_key_id = $AWS_ACCESS_KEY_ID
 aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 " >aws-creds.conf
 
+    kubectl --namespace crossplane-system \
+        create secret generic aws-creds \
+        --from-file creds=./aws-creds.conf
+
 fi
 
 kubectl create namespace a-team
@@ -171,3 +174,9 @@ helm upgrade --install argocd argo-cd \
     --values argocd/helm-values.yaml --wait
 
 kubectl apply --filename argocd/apps.yaml
+
+gum style \
+	--foreground 212 --border-foreground 212 --border double \
+	--margin "1 2" --padding "2 4" \
+	'Open http://argocd.127.0.0.1.nip.io in a browser.
+Use `admin` as username and `admin123` as password.'

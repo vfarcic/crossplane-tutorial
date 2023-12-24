@@ -42,12 +42,20 @@ git commit -m "Remove intro"
 
 git push
 
-COUNTER=$(kubectl get managed --no-headers | grep -v database | wc -l)
+if [[ "$HYPERSCALER" == "google" ]]; then
 
-while [ $COUNTER -ne 0 ]; do
-    echo "$COUNTER resources still exist. Waiting for them to be deleted..."
-    COUNTER=$(kubectl get managed --no-headers | grep -v database | wc -l)
-done
+	gcloud projects delete $PROJECT_ID
+
+elif [[ "$HYPERSCALER" == "aws" ]]; then
+
+	COUNTER=$(kubectl get managed --no-headers | grep -v database | wc -l)
+
+	while [ $COUNTER -ne 0 ]; do
+		echo "$COUNTER resources still exist. Waiting for them to be deleted..."
+		COUNTER=$(kubectl get managed --no-headers | grep -v database | wc -l)
+	done
+
+fi
 
 #########################
 # Control Plane Cluster #
