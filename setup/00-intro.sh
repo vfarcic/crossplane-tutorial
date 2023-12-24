@@ -172,7 +172,7 @@ else
 
     kubectl --namespace crossplane-system create secret generic azure-creds --from-file creds=./azure-creds.json
 
-    kubectl apply --filename crossplane-config/provider-config-azure-official.yaml
+    kubectl apply --filename providers/azure-config.yaml
 
 fi
 
