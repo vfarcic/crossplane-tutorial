@@ -28,7 +28,7 @@ spec:
   id: silly-demo-db
   compositionSelector:
     matchLabels:
-      provider: google-official
+      provider: aws-official
       db: postgresql
   parameters:
     version: "13"
