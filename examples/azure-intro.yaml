@@ -31,7 +31,7 @@ spec:
       provider: azure-official
       db: postgresql
   parameters:
-    version: "10.0"
+    version: "11"
     size: small
 ---
 apiVersion: devopstoolkitseries.com/v1alpha1
