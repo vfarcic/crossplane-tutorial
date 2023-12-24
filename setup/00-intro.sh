@@ -162,10 +162,6 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 
 else
 
-    RESOURCE_GROUP=dot-$(date +%Y%m%d%H%M%S)
-
-    echo "export RESOURCE_GROUP=$RESOURCE_GROUP" >> .env
-
     export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
     az ad sp create-for-rbac --sdk-auth --role Owner --scopes /subscriptions/$SUBSCRIPTION_ID | tee azure-creds.json
