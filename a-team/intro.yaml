@@ -1,0 +1,55 @@
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: ClusterClaim
+metadata:
+  name: cluster-01
+spec:
+  id: cluster-01
+  compositionSelector:
+    matchLabels:
+      provider: google-official
+      cluster: gke
+  parameters:
+    nodeSize: small
+    minNodeCount: 1
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: silly-demo-db-password
+data:
+  password: cG9zdGdyZXM=
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: SQLClaim
+metadata:
+  name: silly-demo-db
+spec:
+  id: silly-demo-db
+  compositionSelector:
+    matchLabels:
+      provider: google-official
+      db: postgresql
+  parameters:
+    version: "13"
+    size: small
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: AppClaim
+metadata:
+  name: silly-demo
+spec:
+  id: silly-demo
+  compositionSelector:
+    matchLabels:
+      type: backend-db
+      location: remote
+  parameters:
+    namespace: production
+    image: c8n.io/vfarcic/silly-demo:1.4.52
+    port: 8080
+    host: silly-demo.acme.com
+    dbSecret:
+      name: silly-demo-db
+      namespace: a-team
+    kubernetesProviderConfigName: cluster-01
