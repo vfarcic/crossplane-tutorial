@@ -156,6 +156,8 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
         create secret generic aws-creds \
         --from-file creds=./aws-creds.conf
 
+    kubectl apply --filename providers/aws-config.yaml
+
 fi
 
 kubectl create namespace a-team
