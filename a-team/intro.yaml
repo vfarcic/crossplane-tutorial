@@ -7,8 +7,8 @@ spec:
   id: cluster-01
   compositionSelector:
     matchLabels:
-      provider: google-official
-      cluster: gke
+      provider: aws-official
+      cluster: eks
   parameters:
     nodeSize: small
     minNodeCount: 1
