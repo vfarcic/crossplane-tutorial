@@ -47,7 +47,7 @@ done
 
 if [[ "$HYPERSCALER" == "google" ]]; then
 
-	gcloud projects delete $PROJECT_ID
+	gcloud projects delete $PROJECT_ID --quiet
 
 fi
 
