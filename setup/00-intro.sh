@@ -192,9 +192,3 @@ helm upgrade --install argocd argo-cd \
     --values argocd/helm-values.yaml --wait
 
 kubectl apply --filename argocd/apps.yaml
-
-gum style \
-	--foreground 212 --border-foreground 212 --border double \
-	--margin "1 2" --padding "2 4" \
-	'Open http://argocd.127.0.0.1.nip.io in a browser.
-Use `admin` as username and `admin123` as password.'
