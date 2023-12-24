@@ -2,7 +2,7 @@
 apiVersion: devopstoolkitseries.com/v1alpha1
 kind: ClusterClaim
 metadata:
-  name: cluster01
+  name: cluster-01
 spec:
   id: cluster01
   compositionSelector:
