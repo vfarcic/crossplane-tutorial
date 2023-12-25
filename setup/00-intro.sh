@@ -12,6 +12,32 @@ Select "Yes" only if you did NOT follow the story from the start (if you jumped 
 Feel free to say "No" and inspect the script if you prefer setting up resources manually.
 ' || exit 0
 
+echo "
+## You will need following tools installed:
+|Name            |Required             |More info                                          |
+|----------------|---------------------|---------------------------------------------------|
+|Linux Shell     |Yes                  |Use WSL if you are running Windows                 |
+|Docker          |Yes                  |'https://docs.docker.com/engine/install'           |
+|kind CLI        |Yes                  |'https://kind.sigs.k8s.io/docs/user/quick-start/#installation'|
+|kubectl CLI     |Yes                  |'https://kubernetes.io/docs/tasks/tools/#kubectl'  |
+|crossplane CLI  |Yes                  |'https://docs.crossplane.io/latest/cli'            |
+|yq CLI          |Yes                  |'https://github.com/mikefarah/yq#install'          |
+|Google Cloud account with admin permissions|If using Google Cloud|'https://cloud.google.com'|
+|Google Cloud CLI|If using Google Cloud|'https://cloud.google.com/sdk/docs/install'        |
+|AWS account with admin permissions|If using AWS|'https://aws.amazon.com'                  |
+|AWS CLI         |If using AWS         |'https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html'|
+|eksctl CLI      |If using AWS         |'https://eksctl.io/installation/'                  |
+|Azure account with admin permissions|If using Azure|'https://azure.microsoft.com'         |
+|az CLI          |If using Azure       |'https://learn.microsoft.com/cli/azure/install-azure-cli'|
+
+If you are running this script from **Nix shell**, most of the requirements are already set with the exception of **Docker**, **crossplane** CLI, and the **hyperscaler account**.
+" | gum format
+
+gum confirm "
+Do you have those tools installed?
+" || exit 0
+
+
 rm -f .env
 
 #########################
@@ -67,15 +93,13 @@ if [[ "$HYPERSCALER" == "google" ]]; then
 
     open "https://console.cloud.google.com/marketplace/product/google/container.googleapis.com?project=$PROJECT_ID"
 
-    gum input --placeholder "
-*ENABLE* the API
-Press the enter key to continue."
+    echo "## *ENABLE* the API" | gum format
+    gum input --placeholder "Press the enter key to continue."
 
     open "https://console.cloud.google.com/apis/library/sqladmin.googleapis.com?project=$PROJECT_ID"
 
-    gum input --placeholder "
-*ENABLE* the API
-Press the enter key to continue."
+    echo "## *ENABLE* the API" | gum format
+    gum input --placeholder "Press the enter key to continue."
 
     export SA_NAME=devops-toolkit
 
