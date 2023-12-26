@@ -10,7 +10,15 @@ spec:
           - image: debian-cloud/debian-11
     machineType: g1-small
     networkInterface:
-      - network: default
+      - networkRef:
+          name: dot-network
     zone: us-east1-b
     desiredStatus: RUNNING
     allowStoppingForUpdate: true
+---
+apiVersion: compute.gcp.upbound.io/v1beta1
+kind: Network
+metadata:
+  name: dot-network
+spec:
+  forProvider: {}
