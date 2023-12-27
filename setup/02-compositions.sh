@@ -4,12 +4,7 @@ set -e
 gum style \
 	--foreground 212 --border-foreground 212 --border double \
 	--margin "1 2" --padding "2 4" \
-	'Setup for the Managed Resources chapter.
-  
-This script assumes that you jumped straight into this chapter.
-If that is not the case (if you are continuing from the previous
-chapter), please answer with "No" when asked whether you are
-ready to start.'
+	'Setup for the Compositions chapter'
 
 gum confirm '
 Are you ready to start?
@@ -25,6 +20,7 @@ echo "
 |Docker          |Yes                  |'https://docs.docker.com/engine/install'           |
 |kind CLI        |Yes                  |'https://kind.sigs.k8s.io/docs/user/quick-start/#installation'|
 |kubectl CLI     |Yes                  |'https://kubernetes.io/docs/tasks/tools/#kubectl'  |
+|crossplane CLI  |Yes                  |'https://docs.crossplane.io/latest/cli'            |
 |yq CLI          |Yes                  |'https://github.com/mikefarah/yq#install'          |
 |Google Cloud account with admin permissions|If using Google Cloud|'https://cloud.google.com'|
 |Google Cloud CLI|If using Google Cloud|'https://cloud.google.com/sdk/docs/install'        |
@@ -33,12 +29,13 @@ echo "
 |Azure account with admin permissions|If using Azure|'https://azure.microsoft.com'         |
 |az CLI          |If using Azure       |'https://learn.microsoft.com/cli/azure/install-azure-cli'|
 
-If you are running this script from **Nix shell**, most of the requirements are already set with the exception of **Docker** and the **hyperscaler account**.
+If you are running this script from **Nix shell**, most of the requirements are already set with the exception of **Docker**, **crossplane** CLI, and the **hyperscaler account**.
 " | gum format
 
 gum confirm "
 Do you have those tools installed?
 " || exit 0
+
 
 rm -f .env
 
@@ -46,11 +43,15 @@ rm -f .env
 # Control Plane Cluster #
 #########################
 
-kind create cluster
+kind create cluster --config kind.yaml
 
 ##############
 # Crossplane #
 ##############
+
+helm upgrade --install crossplane crossplane \
+    --repo https://charts.crossplane.io/stable \
+    --namespace crossplane-system --create-namespace --wait
 
 echo "
 Which Hyperscaler do you want to use?"
@@ -69,11 +70,10 @@ if [[ "$HYPERSCALER" == "google" ]]; then
 
     gcloud projects create ${PROJECT_ID}
 
-    open "https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=$PROJECT_ID"
+    open "https://console.cloud.google.com/apis/library/sqladmin.googleapis.com?project=$PROJECT_ID"
 
-    gum input --placeholder "
-*ENABLE* the API.
-Press the enter key to continue."
+    echo "## *ENABLE* the API" | gum format
+    gum input --placeholder "Press the enter key to continue."
 
     export SA_NAME=devops-toolkit
 
@@ -90,23 +90,19 @@ Press the enter key to continue."
     gcloud iam service-accounts keys create gcp-creds.json \
         --project $PROJECT_ID --iam-account $SA
 
-    yq --inplace ".spec.projectID = \"$PROJECT_ID\"" \
-        providers/google-config.yaml
+    kubectl --namespace crossplane-system \
+        create secret generic gcp-creds \
+        --from-file creds=./gcp-creds.json
 
 elif [[ "$HYPERSCALER" == "aws" ]]; then
 
-    AWS_ACCESS_KEY_ID=$(gum input \
-        --placeholder "AWS Access Key ID" \
-        --value "$AWS_ACCESS_KEY_ID")
+    AWS_ACCESS_KEY_ID=$(gum input --placeholder "AWS Access Key ID" --value "$AWS_ACCESS_KEY_ID")
     echo "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> .env
     
-    AWS_SECRET_ACCESS_KEY=$(gum input \
-        --placeholder "AWS Secret Access Key" \
-        --value "$AWS_SECRET_ACCESS_KEY" --password)
+    AWS_SECRET_ACCESS_KEY=$(gum input --placeholder "AWS Secret Access Key" --value "$AWS_SECRET_ACCESS_KEY" --password)
     echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env
 
-    AWS_ACCOUNT_ID=$(gum input --placeholder "AWS Account ID" \
-        --value "$AWS_ACCOUNT_ID")
+    AWS_ACCOUNT_ID=$(gum input --placeholder "AWS Account ID" --value "$AWS_ACCOUNT_ID")
     echo "export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> .env
 
     echo "[default]
@@ -114,14 +110,18 @@ aws_access_key_id = $AWS_ACCESS_KEY_ID
 aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 " >aws-creds.conf
 
+    kubectl --namespace crossplane-system \
+        create secret generic aws-creds \
+        --from-file creds=./aws-creds.conf
+
 else
 
     az login
 
     export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
-    az ad sp create-for-rbac --sdk-auth --role Owner \
-        --scopes /subscriptions/$SUBSCRIPTION_ID \
-        | tee azure-creds.json
+    az ad sp create-for-rbac --sdk-auth --role Owner --scopes /subscriptions/$SUBSCRIPTION_ID | tee azure-creds.json
+
+    kubectl --namespace crossplane-system create secret generic azure-creds --from-file creds=./azure-creds.json
 
 fi

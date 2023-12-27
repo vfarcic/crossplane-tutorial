@@ -26,7 +26,6 @@ echo "
 |Google Cloud CLI|If using Google Cloud|'https://cloud.google.com/sdk/docs/install'        |
 |AWS account with admin permissions|If using AWS|'https://aws.amazon.com'                  |
 |AWS CLI         |If using AWS         |'https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html'|
-|eksctl CLI      |If using AWS         |'https://eksctl.io/installation/'                  |
 |Azure account with admin permissions|If using Azure|'https://azure.microsoft.com'         |
 |az CLI          |If using Azure       |'https://learn.microsoft.com/cli/azure/install-azure-cli'|
 

@@ -4,7 +4,7 @@ set -e
 gum style \
 	--foreground 212 --border-foreground 212 --border double \
 	--margin "1 2" --padding "2 4" \
-	'Destruction of the Managed Resources chapter'
+	'Destruction of the Compositions chapter'
 
 gum confirm '
 Are you ready to start?
@@ -33,15 +33,19 @@ gum confirm "
 Do you have those tools installed?
 " || exit 0
 
-###############
-# Hyperscaler #
-###############
+##############
+# Crossplane #
+##############
 
-if [[ "$HYPERSCALER" == "google" ]]; then
+kubectl delete --filename examples/$HYPERSCALER-sql-v1.yaml
 
-	gcloud projects delete $PROJECT_ID --quiet
+COUNTER=$(kubectl get managed --no-headers | grep -v database | wc -l)
 
-fi
+while [ $COUNTER -ne 0 ]; do
+	echo "$COUNTER resources still exist. Waiting for them to be deleted..."
+	sleep 30
+	COUNTER=$(kubectl get managed --no-headers | grep -v database | wc -l)
+done
 
 #########################
 # Control Plane Cluster #

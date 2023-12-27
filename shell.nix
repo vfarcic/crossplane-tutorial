@@ -13,7 +13,7 @@ pkgs.mkShell {
     yq-go
     google-cloud-sdk
     awscli2
-    eksctl
     azure-cli
+    teller
   ];
 }

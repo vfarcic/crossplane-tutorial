@@ -1,0 +1,20 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: sqls.devopstoolkitseries.com
+spec:
+  defaultCompositionRef:
+    name: google-postgres
+  group: devopstoolkitseries.com
+  names:
+    kind: SQL
+    plural: sqls
+  claimNames:
+    kind: SQLClaim
+    plural: sqlclaims
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema: {}

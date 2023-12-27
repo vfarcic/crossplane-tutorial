@@ -1,0 +1,216 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: aws-postgresql
+  labels:
+    provider: aws
+    db: postgresql
+spec:
+  compositeTypeRef:
+    apiVersion: devopstoolkitseries.com/v1alpha1
+    kind: SQL
+  resources:
+  - name: vpc
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: VPC
+      spec:
+        forProvider:
+          region: us-east-1
+          cidrBlock: 11.0.0.0/16
+          enableDnsSupport: true
+          enableDnsHostnames: true
+  - name: subnet-a
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: Subnet
+      metadata:
+        labels:
+          zone: us-east-1a
+      spec:
+        forProvider:
+          region: us-east-1
+          availabilityZone: us-east-1a
+          cidrBlock: 11.0.0.0/24
+          vpcIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: subnet-b
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: Subnet
+      metadata:
+        labels:
+          zone: us-east-1b
+      spec:
+        forProvider:
+          region: us-east-1
+          availabilityZone: us-east-1b
+          cidrBlock: 11.0.1.0/24
+          vpcIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: subnet-c
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: Subnet
+      metadata:
+        labels:
+          zone: us-east-1c
+      spec:
+        forProvider:
+          region: us-east-1
+          availabilityZone: us-east-1c
+          cidrBlock: 11.0.2.0/24
+          vpcIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: subnetgroup
+    base:
+      apiVersion: rds.aws.upbound.io/v1beta1
+      kind: SubnetGroup
+      spec:
+        forProvider:
+          region: us-east-1
+          description: I'm too lazy to write a good description
+          subnetIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: gateway
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: InternetGateway
+      spec:
+        forProvider:
+          region: us-east-1
+          vpcIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: routeTable
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: RouteTable
+      spec:
+        forProvider:
+          region: us-east-1
+          vpcIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: route
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: Route
+      spec:
+        forProvider:
+          region: us-east-1
+          routeTableIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+          destinationCidrBlock: 0.0.0.0/0
+          gatewayIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: mainRouteTableAssociation
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: MainRouteTableAssociation
+      spec:
+        forProvider:
+          region: us-east-1
+          routeTableIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+          vpcIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: routeTableAssociation1a
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: RouteTableAssociation
+      spec:
+        forProvider:
+          region: us-east-1
+          routeTableIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+          subnetIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: routeTableAssociation1b
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: RouteTableAssociation
+      spec:
+        forProvider:
+          region: us-east-1
+          routeTableIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+          subnetIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: routeTableAssociation1c
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: RouteTableAssociation
+      spec:
+        forProvider:
+          region: us-east-1
+          routeTableIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+          subnetIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: securityGroup
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: SecurityGroup
+      spec:
+        forProvider:
+          description: I am too lazy to write descriptions
+          region: us-east-1
+          vpcIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: securityGroupRule
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: SecurityGroupRule
+      spec:
+        forProvider:
+          description: I am too lazy to write descriptions
+          region: us-east-1
+          type: ingress
+          fromPort: 5432
+          toPort: 5432
+          protocol: tcp
+          cidrBlocks:
+            - 0.0.0.0/0
+          securityGroupIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+  - name: rdsinstance
+    base:
+      apiVersion: rds.aws.upbound.io/v1beta1
+      kind: Instance
+      spec:
+        forProvider:
+          region: us-east-1
+          dbSubnetGroupNameSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+          vpcSecurityGroupIdSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+          instanceClass: db.m5.large
+          username: masteruser
+          engine: postgres
+          engineVersion: "15.3"
+          skipFinalSnapshot: true
+          publiclyAccessible: true
+          allocatedStorage: 200
+          passwordSecretRef:
+            namespace: crossplane-system
+            key: password
+            name: my-db-password

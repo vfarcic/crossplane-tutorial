@@ -1,0 +1,59 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: azure-postgresql
+  labels:
+    provider: azure
+    db: postgresql
+spec:
+  compositeTypeRef:
+    apiVersion: devopstoolkitseries.com/v1alpha1
+    kind: SQL
+  resources:
+  - name: resourcegroup
+    base:
+      apiVersion: azure.upbound.io/v1beta1
+      kind: ResourceGroup
+      spec:
+        forProvider:
+          name: my-db
+          location: eastus
+  - name: server
+    base:
+      apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
+      kind: Server
+      spec:
+        forProvider:
+          location: eastus
+          resourceGroupNameSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+          storageMb: 5120
+          autoGrowEnabled: true
+          skuName: B_Gen5_1
+          sslEnforcementEnabled: false
+          sslMinimalTlsVersionEnforced: TLSEnforcementDisabled
+          administratorLogin: postgres
+          administratorLoginPasswordSecretRef:
+            key: password
+            name: my-db-password
+            namespace: crossplane-system
+          publicNetworkAccessEnabled: true
+          version: "11"
+          engineVersion: "11"
+        writeConnectionSecretToRef:
+          namespace: crossplane-system
+  - name: firewall-rule
+    base:
+      apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
+      kind: FirewallRule
+      spec:
+        forProvider:
+          startIpAddress: 0.0.0.0
+          endIpAddress: 255.255.255.255
+          resourceGroupNameSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
+          serverNameSelector:
+            matchLabels:
+              crossplane.io/composite: my-db
