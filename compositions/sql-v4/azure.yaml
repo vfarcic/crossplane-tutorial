@@ -1,0 +1,88 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: azure-postgresql
+  labels:
+    provider: azure
+    db: postgresql
+spec:
+  writeConnectionSecretsToNamespace: crossplane-system
+  compositeTypeRef:
+    apiVersion: devopstoolkitseries.com/v1alpha1
+    kind: SQL
+  patchSets:
+  - name: metadata
+    patches:
+    - fromFieldPath: metadata.labels
+      toFieldPath: metadata.labels
+    - fromFieldPath: metadata.annotations
+      toFieldPath: metadata.annotations
+    - fromFieldPath: spec.id
+      toFieldPath: metadata.name
+  resources:
+  - name: resourcegroup
+    base:
+      apiVersion: azure.upbound.io/v1beta1
+      kind: ResourceGroup
+      spec:
+        forProvider:
+          location: eastus
+    patches:
+    - type: PatchSet
+      patchSetName: metadata
+  - name: server
+    base:
+      apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
+      kind: Server
+      spec:
+        forProvider:
+          location: eastus
+          resourceGroupNameSelector:
+            matchControllerRef: true
+          storageMb: 5120
+          autoGrowEnabled: true
+          sslEnforcementEnabled: false
+          sslMinimalTlsVersionEnforced: TLSEnforcementDisabled
+          administratorLogin: postgres
+          administratorLoginPasswordSecretRef:
+            key: password
+            namespace: crossplane-system
+          publicNetworkAccessEnabled: true
+        writeConnectionSecretToRef:
+          namespace: crossplane-system
+    patches:
+    - type: PatchSet
+      patchSetName: metadata
+    - fromFieldPath: spec.id
+      toFieldPath: spec.writeConnectionSecretToRef.name
+    - fromFieldPath: spec.parameters.version
+      toFieldPath: spec.forProvider.version
+    - fromFieldPath: spec.parameters.size
+      toFieldPath: spec.forProvider.skuName
+      transforms:
+      - type: map
+        map:
+          small: B_Gen5_1
+          medium: GP_Gen5_2
+          large: GP_Gen5_8
+    - fromFieldPath: spec.id
+      toFieldPath: spec.forProvider.administratorLoginPasswordSecretRef.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-password"
+  - name: firewall-rule
+    base:
+      apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
+      kind: FirewallRule
+      spec:
+        forProvider:
+          startIpAddress: 0.0.0.0
+          endIpAddress: 255.255.255.255
+          resourceGroupNameSelector:
+            matchControllerRef: true
+          serverNameSelector:
+            matchControllerRef: true
+    patches:
+    - type: PatchSet
+      patchSetName: metadata

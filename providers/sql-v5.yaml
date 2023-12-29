@@ -1,0 +1,70 @@
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-aws-ec2
+spec:
+  package: xpkg.upbound.io/upbound/provider-aws-ec2:v0.46.1
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-aws-rds
+spec:
+  package: xpkg.upbound.io/upbound/provider-aws-rds:v0.46.1
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-gcp-sql
+spec:
+  package: xpkg.upbound.io/upbound/provider-gcp-sql:v0.40.0
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-azure-dbforpostgresql
+spec:
+  package: xpkg.upbound.io/upbound/provider-azure-dbforpostgresql:v0.39.0
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-sql
+spec:
+  package: crossplane/provider-sql:v0.7.0
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: crossplane-provider-kubernetes
+  namespace: crossplane-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: crossplane-provider-kubernetes
+subjects:
+- kind: ServiceAccount
+  name: crossplane-provider-kubernetes
+  namespace: crossplane-system
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: pkg.crossplane.io/v1alpha1
+kind: ControllerConfig
+metadata:
+  name: crossplane-provider-kubernetes
+spec:
+  serviceAccountName: crossplane-provider-kubernetes
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: crossplane-provider-kubernetes
+spec:
+  package: xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v0.9.0
+  controllerConfigRef:
+    name: crossplane-provider-kubernetes

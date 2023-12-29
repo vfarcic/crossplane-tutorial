@@ -11,6 +11,7 @@ pkgs.mkShell {
     kind
     kubectl
     yq-go
+    jq
     google-cloud-sdk
     awscli2
     azure-cli

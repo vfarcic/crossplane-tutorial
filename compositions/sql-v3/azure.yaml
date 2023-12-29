@@ -9,6 +9,15 @@ spec:
   compositeTypeRef:
     apiVersion: devopstoolkitseries.com/v1alpha1
     kind: SQL
+  patchSets:
+  - name: metadata
+    patches:
+    - fromFieldPath: metadata.labels
+      toFieldPath: metadata.labels
+    - fromFieldPath: metadata.annotations
+      toFieldPath: metadata.annotations
+    - fromFieldPath: spec.id
+      toFieldPath: metadata.name
   resources:
   - name: resourcegroup
     base:
@@ -16,8 +25,10 @@ spec:
       kind: ResourceGroup
       spec:
         forProvider:
-          name: my-db
           location: eastus
+    patches:
+    - type: PatchSet
+      patchSetName: metadata
   - name: server
     base:
       apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
@@ -26,21 +37,35 @@ spec:
         forProvider:
           location: eastus
           resourceGroupNameSelector:
-            matchLabels:
-              crossplane.io/composite: my-db
+            matchControllerRef: true
           storageMb: 5120
           autoGrowEnabled: true
-          skuName: B_Gen5_1
           sslEnforcementEnabled: false
           sslMinimalTlsVersionEnforced: TLSEnforcementDisabled
           administratorLogin: postgres
           administratorLoginPasswordSecretRef:
             key: password
-            name: my-db-password
             namespace: crossplane-system
           publicNetworkAccessEnabled: true
-          version: "11"
-          engineVersion: "11"
+    patches:
+    - type: PatchSet
+      patchSetName: metadata
+    - fromFieldPath: spec.parameters.version
+      toFieldPath: spec.forProvider.version
+    - fromFieldPath: spec.parameters.size
+      toFieldPath: spec.forProvider.skuName
+      transforms:
+      - type: map
+        map:
+          small: B_Gen5_1
+          medium: GP_Gen5_2
+          large: GP_Gen5_8
+    - fromFieldPath: spec.id
+      toFieldPath: spec.forProvider.administratorLoginPasswordSecretRef.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-password"
   - name: firewall-rule
     base:
       apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
@@ -50,8 +75,9 @@ spec:
           startIpAddress: 0.0.0.0
           endIpAddress: 255.255.255.255
           resourceGroupNameSelector:
-            matchLabels:
-              crossplane.io/composite: my-db
+            matchControllerRef: true
           serverNameSelector:
-            matchLabels:
-              crossplane.io/composite: my-db
+            matchControllerRef: true
+    patches:
+    - type: PatchSet
+      patchSetName: metadata

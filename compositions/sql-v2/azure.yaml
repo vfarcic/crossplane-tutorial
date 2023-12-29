@@ -26,8 +26,7 @@ spec:
         forProvider:
           location: eastus
           resourceGroupNameSelector:
-            matchLabels:
-              crossplane.io/composite: my-db
+            matchControllerRef: true
           storageMb: 5120
           autoGrowEnabled: true
           skuName: B_Gen5_1
@@ -50,8 +49,6 @@ spec:
           startIpAddress: 0.0.0.0
           endIpAddress: 255.255.255.255
           resourceGroupNameSelector:
-            matchLabels:
-              crossplane.io/composite: my-db
+            matchControllerRef: true
           serverNameSelector:
-            matchLabels:
-              crossplane.io/composite: my-db
+            matchControllerRef: true

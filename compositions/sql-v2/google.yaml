@@ -1,0 +1,50 @@
+---
+
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: google-postgresql
+  labels:
+    provider: google
+    db: postgresql
+spec:
+  compositeTypeRef:
+    apiVersion: devopstoolkitseries.com/v1alpha1
+    kind: SQL
+  resources:
+  - name: sql
+    base:
+      apiVersion: sql.gcp.upbound.io/v1beta1
+      kind: DatabaseInstance
+      spec:
+        forProvider:
+          region: us-east1
+          rootPasswordSecretRef:
+            namespace: crossplane-system
+            key: password
+            name: my-db-password
+          databaseVersion: "POSTGRES_13"
+          settings:
+          - availabilityType: REGIONAL
+            tier: db-custom-1-3840
+            backupConfiguration:
+            - enabled: true
+              binaryLogEnabled: false
+            ipConfiguration:
+            - ipv4Enabled: true
+              authorizedNetworks:
+              - name: all
+                value: 0.0.0.0/0
+          deletionProtection: false
+  - name: user
+    base:
+      apiVersion: sql.gcp.upbound.io/v1beta1
+      kind: User
+      spec:
+        forProvider:
+          passwordSecretRef:
+            key: password
+            name: my-db-password
+            namespace: crossplane-system
+          instanceSelector:
+            matchControllerRef: true

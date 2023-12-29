@@ -1,0 +1,91 @@
+---
+
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: google-postgresql
+  labels:
+    provider: google
+    db: postgresql
+spec:
+  compositeTypeRef:
+    apiVersion: devopstoolkitseries.com/v1alpha1
+    kind: SQL
+  patchSets:
+  - name: metadata
+    patches:
+    - fromFieldPath: metadata.labels
+      toFieldPath: metadata.labels
+    - fromFieldPath: metadata.annotations
+      toFieldPath: metadata.annotations
+    - fromFieldPath: spec.id
+      toFieldPath: metadata.name
+  resources:
+  - name: sql
+    base:
+      apiVersion: sql.gcp.upbound.io/v1beta1
+      kind: DatabaseInstance
+      spec:
+        forProvider:
+          region: us-east1
+          rootPasswordSecretRef:
+            namespace: crossplane-system
+            key: password
+          settings:
+          - availabilityType: REGIONAL
+            backupConfiguration:
+            - enabled: true
+              binaryLogEnabled: false
+            ipConfiguration:
+            - ipv4Enabled: true
+              authorizedNetworks:
+              - name: all
+                value: 0.0.0.0/0
+          deletionProtection: false
+        writeConnectionSecretToRef:
+          namespace: crossplane-system
+    patches:
+    - type: PatchSet
+      patchSetName: metadata
+    - fromFieldPath: spec.parameters.version
+      toFieldPath: spec.forProvider.databaseVersion
+      transforms:
+      - type: string
+        string:
+          fmt: POSTGRES_%s
+    - fromFieldPath: spec.parameters.size
+      toFieldPath: spec.forProvider.settings[0].tier
+      transforms:
+      - type: map
+        map:
+          small: db-custom-1-3840
+          medium: db-custom-16-61440
+          large: db-custom-64-245760
+    - fromFieldPath: spec.id
+      toFieldPath: spec.writeConnectionSecretToRef.name
+    - fromFieldPath: spec.id
+      toFieldPath: spec.forProvider.rootPasswordSecretRef.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-password"
+  - name: user
+    base:
+      apiVersion: sql.gcp.upbound.io/v1beta1
+      kind: User
+      spec:
+        forProvider:
+          passwordSecretRef:
+            key: password
+            namespace: crossplane-system
+          instanceSelector:
+            matchControllerRef: true
+    patches:
+    - type: PatchSet
+      patchSetName: metadata
+    - fromFieldPath: spec.id
+      toFieldPath: spec.forProvider.passwordSecretRef.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-password"
