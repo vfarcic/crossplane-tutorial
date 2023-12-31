@@ -45,6 +45,8 @@ rm -f .env
 
 kind create cluster --config kind.yaml
 
+kubectl create namespace a-team
+
 ##############
 # Crossplane #
 ##############
