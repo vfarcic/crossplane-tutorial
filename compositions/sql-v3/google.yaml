@@ -1,5 +1,4 @@
 ---
-
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
@@ -59,8 +58,6 @@ spec:
           small: db-custom-1-3840
           medium: db-custom-16-61440
           large: db-custom-64-245760
-    - fromFieldPath: spec.id
-      toFieldPath: spec.writeConnectionSecretToRef.name
     - fromFieldPath: spec.id
       toFieldPath: spec.forProvider.rootPasswordSecretRef.name
       transforms:

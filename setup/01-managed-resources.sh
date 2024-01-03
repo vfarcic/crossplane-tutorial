@@ -69,11 +69,15 @@ if [[ "$HYPERSCALER" == "google" ]]; then
 
     gcloud projects create ${PROJECT_ID}
 
+    open "https://console.cloud.google.com/billing/linkedaccount?project=$PROJECT_ID"
+
+    echo "## LINK A BILLING ACCOUNT" | gum format
+    gum input --placeholder "Press the enter key to continue."
+
     open "https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=$PROJECT_ID"
 
-    gum input --placeholder "
-*ENABLE* the API.
-Press the enter key to continue."
+    echo "## ENABLE the API" | gum format
+    gum input --placeholder "Press the enter key to continue."
 
     export SA_NAME=devops-toolkit
 
@@ -108,7 +112,7 @@ elif [[ "$HYPERSCALER" == "aws" ]]; then
     AWS_ACCOUNT_ID=$(gum input --placeholder "AWS Account ID" \
         --value "$AWS_ACCOUNT_ID")
     echo "export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> .env
-
+f
     echo "[default]
 aws_access_key_id = $AWS_ACCESS_KEY_ID
 aws_secret_access_key = $AWS_SECRET_ACCESS_KEY

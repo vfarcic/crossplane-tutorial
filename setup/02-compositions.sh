@@ -72,9 +72,14 @@ if [[ "$HYPERSCALER" == "google" ]]; then
 
     gcloud projects create ${PROJECT_ID}
 
+    open "https://console.cloud.google.com/billing/linkedaccount?project=$PROJECT_ID"
+
+    echo "## LINK A BILLING ACCOUNT" | gum format
+    gum input --placeholder "Press the enter key to continue."
+
     open "https://console.cloud.google.com/apis/library/sqladmin.googleapis.com?project=$PROJECT_ID"
 
-    echo "## *ENABLE* the API" | gum format
+    echo "## ENABLE the API" | gum format
     gum input --placeholder "Press the enter key to continue."
 
     export SA_NAME=devops-toolkit
@@ -84,10 +89,9 @@ if [[ "$HYPERSCALER" == "google" ]]; then
     gcloud iam service-accounts create $SA_NAME \
         --project $PROJECT_ID
 
-    export ROLE=roles/admin
-
     gcloud projects add-iam-policy-binding \
-        --role $ROLE $PROJECT_ID --member serviceAccount:$SA
+        --role roles/admin $PROJECT_ID \
+        --member serviceAccount:$SA
 
     gcloud iam service-accounts keys create gcp-creds.json \
         --project $PROJECT_ID --iam-account $SA
@@ -95,6 +99,9 @@ if [[ "$HYPERSCALER" == "google" ]]; then
     kubectl --namespace crossplane-system \
         create secret generic gcp-creds \
         --from-file creds=./gcp-creds.json
+
+    yq --inplace ".spec.projectID = \"$PROJECT_ID\"" \
+        providers/google-config.yaml
 
 elif [[ "$HYPERSCALER" == "aws" ]]; then
 

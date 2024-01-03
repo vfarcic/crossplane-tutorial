@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-db-password
+  namespace: crossplane-system
+data:
+  password: cG9zdGdyZXM=
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: SQL
+metadata:
+  name: my-db
+  annotations:
+    organization: DevOps Toolkit
+    author: Viktor Farcic <viktor@farcic.com>
+spec:
+  id: my-db
+  compositionSelector:
+    matchLabels:
+      provider: google
+      db: postgresql
+  parameters:
+    version: "13"
+    size: small

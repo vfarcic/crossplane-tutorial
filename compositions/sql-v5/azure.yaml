@@ -1,3 +1,4 @@
+---
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
@@ -6,6 +7,7 @@ metadata:
     provider: azure
     db: postgresql
 spec:
+  writeConnectionSecretsToNamespace: crossplane-system
   compositeTypeRef:
     apiVersion: devopstoolkitseries.com/v1alpha1
     kind: SQL
@@ -102,8 +104,8 @@ spec:
       patchSetName: metadata
     - fromFieldPath: spec.id
       toFieldPath: spec.credentials.connectionSecretRef.name
-    - fromFieldPath: spec.claimRef.namespace
-      toFieldPath: spec.credentials.connectionSecretRef.namespace
+    readinessChecks:
+    - type: None
   - name: sql-db
     base:
       apiVersion: postgresql.sql.crossplane.io/v1alpha1
