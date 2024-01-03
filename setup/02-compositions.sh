@@ -29,7 +29,7 @@ echo "
 |Azure account with admin permissions|If using Azure|'https://azure.microsoft.com'         |
 |az CLI          |If using Azure       |'https://learn.microsoft.com/cli/azure/install-azure-cli'|
 
-If you are running this script from **Nix shell**, most of the requirements are already set with the exception of **Docker**, **crossplane** CLI, and the **hyperscaler account**.
+If you are running this script from **Nix shell**, most of the requirements are already set with the exception of **Docker** and the **hyperscaler account**.
 " | gum format
 
 gum confirm "
@@ -118,7 +118,9 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 
 else
 
-    az login
+    AZURE_TENANT_ID=$(gum input --placeholder "Azure Tenant ID" --value "$AZURE_TENANT_ID")
+
+    az login --tenant $AZURE_TENANT_ID
 
     export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 

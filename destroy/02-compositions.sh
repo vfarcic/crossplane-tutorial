@@ -37,14 +37,17 @@ Do you have those tools installed?
 # Crossplane #
 ##############
 
-kubectl --namespace a-team delete --filename examples/$HYPERSCALER-sql-v5.yaml
+kubectl --namespace a-team delete \
+	--filename examples/$HYPERSCALER-sql-v5.yaml
 
-COUNTER=$(kubectl get managed --no-headers | grep -v database | wc -l)
+COUNTER=$(kubectl get managed --no-headers | grep -v database \
+	| wc -l)
 
 while [ $COUNTER -ne 0 ]; do
 	echo "$COUNTER resources still exist. Waiting for them to be deleted..."
 	sleep 30
-	COUNTER=$(kubectl get managed --no-headers | grep -v database | wc -l)
+	COUNTER=$(kubectl get managed --no-headers \
+		| grep -v database | wc -l)
 done
 
 #########################

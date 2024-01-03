@@ -98,6 +98,10 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 
 else
 
+    AZURE_TENANT_ID=$(gum input --placeholder "Azure Tenant ID" --value "$AZURE_TENANT_ID")
+
+    az login --tenant $AZURE_TENANT_ID
+
     export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
     az ad sp create-for-rbac --sdk-auth --role Owner \

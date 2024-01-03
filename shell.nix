@@ -17,4 +17,11 @@ pkgs.mkShell {
     azure-cli
     teller
   ];
+  shellHook =
+  ''
+    curl -sL "https://raw.githubusercontent.com/crossplane/crossplane/master/install.sh" | sh
+    mkdir -p bin
+    mv crossplane bin/.
+    export PATH=$PWD/bin:$PATH
+  '';
 }

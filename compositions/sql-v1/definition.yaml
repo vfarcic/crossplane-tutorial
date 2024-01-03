@@ -3,6 +3,8 @@ kind: CompositeResourceDefinition
 metadata:
   name: sqls.devopstoolkitseries.com
 spec:
+  defaultCompositeDeletePolicy: Background
+  defaultCompositionUpdatePolicy: Automatic
   defaultCompositionRef:
     name: google-postgres
   group: devopstoolkitseries.com
