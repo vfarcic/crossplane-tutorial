@@ -14,9 +14,10 @@ spec:
     base:
       apiVersion: azure.upbound.io/v1beta1
       kind: ResourceGroup
+      metadata:
+        name: my-db
       spec:
         forProvider:
-          name: my-db
           location: eastus
   - name: server
     base:
