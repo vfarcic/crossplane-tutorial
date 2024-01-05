@@ -145,6 +145,14 @@ spec:
       metadata:
         name: sql-secret
       spec:
+        forProvider:
+          manifest:
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              namespace: crossplane-system
+            data:
+              port: NTQzMg==
         references:
         - patchesFrom:
             apiVersion: sql.gcp.upbound.io/v1beta1
@@ -163,14 +171,6 @@ spec:
             namespace: crossplane-system
             fieldPath: status.atProvider.publicIpAddress
           toFieldPath: stringData.endpoint
-        forProvider:
-          manifest:
-            apiVersion: v1
-            kind: Secret
-            metadata:
-              namespace: crossplane-system
-            data:
-              port: NTQzMg==
     patches:
     - type: PatchSet
       patchSetName: metadata
