@@ -14,8 +14,6 @@ spec:
   patchSets:
   - name: metadata
     patches:
-    - fromFieldPath: metadata.labels
-      toFieldPath: metadata.labels
     - fromFieldPath: metadata.annotations
       toFieldPath: metadata.annotations
     - fromFieldPath: spec.id
@@ -123,8 +121,6 @@ spec:
         credentials:
           source: InjectedIdentity
     patches:
-    - fromFieldPath: metadata.labels
-      toFieldPath: metadata.labels
     - fromFieldPath: metadata.annotations
       toFieldPath: metadata.annotations
     - fromFieldPath: spec.id

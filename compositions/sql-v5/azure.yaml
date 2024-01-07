@@ -14,8 +14,6 @@ spec:
   patchSets:
   - name: metadata
     patches:
-    - fromFieldPath: metadata.labels
-      toFieldPath: metadata.labels
     - fromFieldPath: metadata.annotations
       toFieldPath: metadata.annotations
     - fromFieldPath: spec.id

@@ -14,6 +14,7 @@ pkgs.mkShell {
     google-cloud-sdk
     awscli2
     azure-cli
+    upbound
     teller
   ];
   shellHook =

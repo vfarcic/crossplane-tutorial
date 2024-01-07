@@ -14,8 +14,6 @@ spec:
   patchSets:
   - name: metadata
     patches:
-    - fromFieldPath: metadata.labels
-      toFieldPath: metadata.labels
     - fromFieldPath: metadata.annotations
       toFieldPath: metadata.annotations
     - fromFieldPath: spec.id
@@ -49,8 +47,6 @@ spec:
           vpcIdSelector:
             matchControllerRef: true
     patches:
-    - fromFieldPath: metadata.labels
-      toFieldPath: metadata.labels
     - fromFieldPath: metadata.annotations
       toFieldPath: metadata.annotations
     - fromFieldPath: spec.id
@@ -74,8 +70,6 @@ spec:
           vpcIdSelector:
             matchControllerRef: true
     patches:
-    - fromFieldPath: metadata.labels
-      toFieldPath: metadata.labels
     - fromFieldPath: metadata.annotations
       toFieldPath: metadata.annotations
     - fromFieldPath: spec.id
@@ -99,8 +93,6 @@ spec:
           vpcIdSelector:
             matchControllerRef: true
     patches:
-    - fromFieldPath: metadata.labels
-      toFieldPath: metadata.labels
     - fromFieldPath: metadata.annotations
       toFieldPath: metadata.annotations
     - fromFieldPath: spec.id
@@ -189,8 +181,6 @@ spec:
             matchLabels:
               zone: us-east-1a
     patches:
-    - fromFieldPath: metadata.labels
-      toFieldPath: metadata.labels
     - fromFieldPath: metadata.annotations
       toFieldPath: metadata.annotations
     - fromFieldPath: spec.id
@@ -213,8 +203,6 @@ spec:
             matchLabels:
               zone: us-east-1b
     patches:
-    - fromFieldPath: metadata.labels
-      toFieldPath: metadata.labels
     - fromFieldPath: metadata.annotations
       toFieldPath: metadata.annotations
     - fromFieldPath: spec.id
@@ -237,8 +225,6 @@ spec:
             matchLabels:
               zone: us-east-1c
     patches:
-    - fromFieldPath: metadata.labels
-      toFieldPath: metadata.labels
     - fromFieldPath: metadata.annotations
       toFieldPath: metadata.annotations
     - fromFieldPath: spec.id
