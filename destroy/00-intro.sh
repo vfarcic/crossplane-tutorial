@@ -45,12 +45,12 @@ git commit -m "Remove intro"
 
 git push
 
-COUNTER=$(kubectl get managed --no-headers | grep -v database | wc -l)
+COUNTER=$(kubectl get managed --no-headers | grep -v database | grep -v object | grep -v release | wc -l)
 
 while [ $COUNTER -ne 0 ]; do
 	echo "$COUNTER resources still exist. Waiting for them to be deleted..."
 	sleep 30
-	COUNTER=$(kubectl get managed --no-headers | grep -v database | wc -l)
+	COUNTER=$(kubectl get managed --no-headers | grep -v database | grep -v object | grep -v release | wc -l)
 done
 
 if [[ "$HYPERSCALER" == "google" ]]; then
