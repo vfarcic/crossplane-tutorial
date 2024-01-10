@@ -42,6 +42,10 @@ Do you have those tools installed?
 
 rm -f .env
 
+git fetch upstream
+
+git merge upstream/main
+
 #########################
 # Control Plane Cluster #
 #########################

@@ -36,7 +36,6 @@ gum confirm "
 Do you have those tools installed?
 " || exit 0
 
-
 rm -f .env
 
 #########################
