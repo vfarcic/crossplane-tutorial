@@ -172,3 +172,11 @@ sleep 3
 
 kubectl --namespace a-team apply \
     --filename examples/$HYPERSCALER-sql-v6.yaml
+
+##################
+# Atlas Operator #
+##################
+
+helm upgrade --install atlas-operator \
+    oci://ghcr.io/ariga/charts/atlas-operator \
+    --namespace atlas-operator --create-namespace --wait
