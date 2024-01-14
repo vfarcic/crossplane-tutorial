@@ -42,9 +42,13 @@ Do you have those tools installed?
 
 rm -f .env
 
+set +e
+
 git fetch upstream
 
 git merge upstream/main
+
+set -e
 
 #########################
 # Control Plane Cluster #

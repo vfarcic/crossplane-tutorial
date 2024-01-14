@@ -132,14 +132,43 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 
 else
 
-    AZURE_TENANT_ID=$(gum input --placeholder "Azure Tenant ID" --value "$AZURE_TENANT_ID")
+    AZURE_TENANT_ID=$(gum input \
+        --placeholder "Azure Tenant ID" \
+        --value "$AZURE_TENANT_ID")
 
     az login --tenant $AZURE_TENANT_ID
 
     export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
-    az ad sp create-for-rbac --sdk-auth --role Owner --scopes /subscriptions/$SUBSCRIPTION_ID | tee azure-creds.json
+    az ad sp create-for-rbac --sdk-auth --role Owner \
+        --scopes /subscriptions/$SUBSCRIPTION_ID \
+        | tee azure-creds.json
 
-    kubectl --namespace crossplane-system create secret generic azure-creds --from-file creds=./azure-creds.json
+    kubectl --namespace crossplane-system \
+        create secret generic azure-creds \
+        --from-file creds=./azure-creds.json
 
 fi
+
+kubectl apply --filename providers/sql-v5.yaml
+
+gum spin --spinner dot \
+    --title "Waiting for Crossplane providers..." -- sleep 60
+
+kubectl wait --for=condition=healthy provider.pkg.crossplane.io \
+    --all --timeout=600s
+
+kubectl apply --filename providers/$HYPERSCALER-config.yaml
+
+kubectl apply --filename compositions/sql-v7/definition.yaml
+
+kubectl apply --filename compositions/sql-v7/aws.yaml
+
+kubectl apply --filename compositions/sql-v7/azure.yaml
+
+kubectl apply --filename compositions/sql-v7/google.yaml
+
+sleep 3
+
+kubectl --namespace a-team apply \
+    --filename examples/$HYPERSCALER-sql-v6.yaml

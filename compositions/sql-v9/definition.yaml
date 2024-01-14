@@ -1,0 +1,46 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: sqls.devopstoolkitseries.com
+spec:
+  group: devopstoolkitseries.com
+  names:
+    kind: SQL
+    plural: sqls
+  claimNames:
+    kind: SQLClaim
+    plural: sqlclaims
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Database ID
+              parameters:
+                type: object
+                properties:
+                  version:
+                    description: The DB version depends on the DB type and versions available in the selected provider.
+                    type: string
+                  size:
+                    description: "Supported sizes: small, medium, large"
+                    type: string
+                    default: small
+                  databases:
+                    description: The list of databases to create inside the DB server.
+                    type: array
+                    items:
+                      type: string
+                required:
+                - version
+            required:
+            - parameters
