@@ -62,8 +62,7 @@ helm upgrade --install crossplane crossplane \
     --repo https://charts.crossplane.io/stable \
     --namespace crossplane-system --create-namespace --wait
 
-echo "
-Which Hyperscaler do you want to use?"
+echo "## Which Hyperscaler do you want to use?" | gum format
 
 HYPERSCALER=$(gum choose "google" "aws" "azure")
 
@@ -141,5 +140,88 @@ else
     az ad sp create-for-rbac --sdk-auth --role Owner --scopes /subscriptions/$SUBSCRIPTION_ID | tee azure-creds.json
 
     kubectl --namespace crossplane-system create secret generic azure-creds --from-file creds=./azure-creds.json
+
+    DB_NAME=my-db-$(date +%Y%m%d%H%M%S)
+
+    echo "---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: $DB_NAME-password
+  namespace: crossplane-system
+data:
+  password: T1QrOXZQcDhMdXhoeFVQWVpLSk1kUG1YM04xTzBTd3YzWG5ZVjI0UFZzcz0=
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: SQL
+metadata:
+  name: $DB_NAME
+spec:
+  compositionSelector:
+    matchLabels:
+      provider: azure
+      db: postgresql" \
+    | tee examples/azure-sql-v1.yaml
+
+    sleep 1
+
+    DB_NAME=my-db-$(date +%Y%m%d%H%M%S)
+
+    echo "---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: $DB_NAME-password
+  namespace: crossplane-system
+data:
+  password: T1QrOXZQcDhMdXhoeFVQWVpLSk1kUG1YM04xTzBTd3YzWG5ZVjI0UFZzcz0=
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: SQL
+metadata:
+  name: my-db
+  annotations:
+    organization: DevOps Toolkit
+    author: Viktor Farcic <viktor@farcic.com>
+spec:
+  id: $DB_NAME
+  compositionSelector:
+    matchLabels:
+      provider: azure
+      db: postgresql
+  parameters:
+    version: \"11\"
+    size: small" \
+    | tee examples/azure-sql-v3.yaml
+
+    sleep 1
+
+    DB_NAME=my-db-$(date +%Y%m%d%H%M%S)
+
+    echo "---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: $DB_NAME-password
+data:
+  password: T1QrOXZQcDhMdXhoeFVQWVpLSk1kUG1YM04xTzBTd3YzWG5ZVjI0UFZzcz0=
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: SQLClaim
+metadata:
+  name: my-db
+  annotations:
+    organization: DevOps Toolkit
+    author: Viktor Farcic <viktor@farcic.com>
+spec:
+  id: $DB_NAME
+  compositionSelector:
+    matchLabels:
+      provider: azure
+      db: postgresql
+  parameters:
+    version: \"11\"
+    size: small" \
+    | tee examples/azure-sql-v6.yaml
 
 fi

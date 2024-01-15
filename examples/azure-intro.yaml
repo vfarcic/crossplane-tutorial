@@ -16,7 +16,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: silly-demo-db-password
+  name: silly-demo-db-20240114234411-password
 data:
   password: SVdpbGxOZXZlclRlbGxAMQ==
 ---
@@ -25,7 +25,7 @@ kind: SQLClaim
 metadata:
   name: silly-demo-db
 spec:
-  id: silly-demo-db
+  id: silly-demo-db-20240114234411
   compositionSelector:
     matchLabels:
       provider: azure-official

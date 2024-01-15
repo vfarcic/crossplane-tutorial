@@ -72,8 +72,7 @@ gum spin --spinner dot \
 kubectl wait --for=condition=healthy provider.pkg.crossplane.io \
     --all --timeout=600s
 
-echo "
-Which Hyperscaler do you want to use?"
+echo "## Which Hyperscaler do you want to use?" | gum format
 
 HYPERSCALER=$(gum choose "google" "aws" "azure")
 
@@ -172,6 +171,65 @@ else
     kubectl --namespace crossplane-system create secret generic azure-creds --from-file creds=./azure-creds.json
 
     kubectl apply --filename providers/azure-config.yaml
+
+    DB_NAME=silly-demo-db-$(date +%Y%m%d%H%M%S)
+
+    echo "---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: ClusterClaim
+metadata:
+  name: cluster-01
+spec:
+  id: cluster01
+  compositionSelector:
+    matchLabels:
+      provider: azure-official
+      cluster: aks
+  parameters:
+    nodeSize: small
+    minNodeCount: 3
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: $DB_NAME-password
+data:
+  password: SVdpbGxOZXZlclRlbGxAMQ==
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: SQLClaim
+metadata:
+  name: silly-demo-db
+spec:
+  id: $DB_NAME
+  compositionSelector:
+    matchLabels:
+      provider: azure-official
+      db: postgresql
+  parameters:
+    version: \"11\"
+    size: small
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: AppClaim
+metadata:
+  name: silly-demo
+spec:
+  id: silly-demo
+  compositionSelector:
+    matchLabels:
+      type: backend-db
+      location: remote
+  parameters:
+    namespace: production
+    image: c8n.io/vfarcic/silly-demo:1.4.52
+    port: 8080
+    host: silly-demo.acme.com
+    dbSecret:
+      name: silly-demo-db
+      namespace: a-team
+    kubernetesProviderConfigName: cluster01" \
+    | tee examples/azure-intro.yaml
 
 fi
 

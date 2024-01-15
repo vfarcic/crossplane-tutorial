@@ -62,8 +62,7 @@ helm upgrade --install crossplane crossplane \
     --repo https://charts.crossplane.io/stable \
     --namespace crossplane-system --create-namespace --wait
 
-echo "
-Which Hyperscaler do you want to use?"
+echo "## Which Hyperscaler do you want to use?" | gum format
 
 HYPERSCALER=$(gum choose "google" "aws" "azure")
 
@@ -148,6 +147,107 @@ else
         create secret generic azure-creds \
         --from-file creds=./azure-creds.json
 
+    DB_NAME=my-db-$(date +%Y%m%d%H%M%S)
+
+    echo "---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: $DB_NAME-password
+data:
+  password: T1QrOXZQcDhMdXhoeFVQWVpLSk1kUG1YM04xTzBTd3YzWG5ZVjI0UFZzcz0=
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: SQLClaim
+metadata:
+  name: my-db
+  annotations:
+    organization: DevOps Toolkit
+    author: Viktor Farcic <viktor@farcic.com>
+spec:
+  id: $DB_NAME
+  compositionSelector:
+    matchLabels:
+      provider: azure
+      db: postgresql
+  parameters:
+    version: \"11\"
+    size: small" \
+    | tee examples/azure-sql-v7.yaml
+
+    echo "---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: $DB_NAME-password
+data:
+  password: T1QrOXZQcDhMdXhoeFVQWVpLSk1kUG1YM04xTzBTd3YzWG5ZVjI0UFZzcz0=
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: SQLClaim
+metadata:
+  name: my-db
+  annotations:
+    organization: DevOps Toolkit
+    author: Viktor Farcic <viktor@farcic.com>
+spec:
+  id: $DB_NAME
+  compositionSelector:
+    matchLabels:
+      provider: azure
+      db: postgresql
+  parameters:
+    version: \"11\"
+    size: small
+    databases:
+      - db-01
+      - db-02" \
+    | tee examples/azure-sql-v9.yaml
+
+    echo "---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: $DB_NAME-password
+data:
+  password: T1QrOXZQcDhMdXhoeFVQWVpLSk1kUG1YM04xTzBTd3YzWG5ZVjI0UFZzcz0=
+---
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: SQLClaim
+metadata:
+  name: my-db
+  annotations:
+    organization: DevOps Toolkit
+    author: Viktor Farcic <viktor@farcic.com>
+spec:
+  id: $DB_NAME
+  compositionSelector:
+    matchLabels:
+      provider: azure
+      db: postgresql
+  parameters:
+    version: \"11\"
+    size: small
+    databases:
+      - db-01
+      - db-02
+    schemas:
+      - database: db-01
+        sql: |
+          create table videos (
+            id varchar(50) not null,
+            description text,
+            primary key (id)
+          );
+          create table comments (
+            id serial,
+            video_id varchar(50) not null,
+            description text not null,
+            primary key (id),
+            CONSTRAINT fk_videos FOREIGN KEY(video_id) REFERENCES videos(id)
+          );" \
+    | tee examples/azure-sql-v10.yaml
+
 fi
 
 kubectl apply --filename providers/sql-v5.yaml
@@ -171,7 +271,7 @@ kubectl apply --filename compositions/sql-v7/google.yaml
 sleep 3
 
 kubectl --namespace a-team apply \
-    --filename examples/$HYPERSCALER-sql-v6.yaml
+    --filename examples/$HYPERSCALER-sql-v7.yaml
 
 ##################
 # Atlas Operator #

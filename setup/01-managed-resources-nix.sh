@@ -34,8 +34,7 @@ kind create cluster
 # Crossplane #
 ##############
 
-echo "
-Which Hyperscaler do you want to use?"
+echo "## Which Hyperscaler do you want to use?" | gum format
 
 HYPERSCALER=$(gum choose "google" "aws" "azure")
 

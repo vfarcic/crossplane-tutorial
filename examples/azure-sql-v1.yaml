@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-db-password
+  name: my-db-20240114235140-password
   namespace: crossplane-system
 data:
   password: T1QrOXZQcDhMdXhoeFVQWVpLSk1kUG1YM04xTzBTd3YzWG5ZVjI0UFZzcz0=
@@ -10,7 +10,7 @@ data:
 apiVersion: devopstoolkitseries.com/v1alpha1
 kind: SQL
 metadata:
-  name: my-db
+  name: my-db-20240114235140
 spec:
   compositionSelector:
     matchLabels:

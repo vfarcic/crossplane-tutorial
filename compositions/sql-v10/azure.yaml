@@ -113,6 +113,25 @@ spec:
           toFieldPath: spec.credentials.connectionSecretRef.namespace
         readinessChecks:
         - type: None
+      - name: kubernetes
+        base:
+          apiVersion: kubernetes.crossplane.io/v1alpha1
+          kind: ProviderConfig
+          spec:
+            credentials:
+              source: InjectedIdentity
+        patches:
+        - fromFieldPath: metadata.annotations
+          toFieldPath: metadata.annotations
+        - fromFieldPath: spec.id
+          toFieldPath: metadata.name
+          transforms:
+          - type: string
+            string:
+              fmt: "%s-sql"
+              type: Format
+        readinessChecks:
+        - type: None
   - functionRef:
       name: upbound-function-go-templating
     step: sql-db

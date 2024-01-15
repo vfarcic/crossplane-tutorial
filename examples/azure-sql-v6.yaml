@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-db-3-password
+  name: my-db-20240115000551-password
 data:
   password: T1QrOXZQcDhMdXhoeFVQWVpLSk1kUG1YM04xTzBTd3YzWG5ZVjI0UFZzcz0=
 ---
@@ -14,7 +14,7 @@ metadata:
     organization: DevOps Toolkit
     author: Viktor Farcic <viktor@farcic.com>
 spec:
-  id: my-db-3
+  id: my-db-20240115000551
   compositionSelector:
     matchLabels:
       provider: azure

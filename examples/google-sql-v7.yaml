@@ -2,24 +2,23 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-db-20240115000456-password
-  namespace: crossplane-system
+  name: my-db-password
 data:
-  password: T1QrOXZQcDhMdXhoeFVQWVpLSk1kUG1YM04xTzBTd3YzWG5ZVjI0UFZzcz0=
+  password: cG9zdGdyZXM=
 ---
 apiVersion: devopstoolkitseries.com/v1alpha1
-kind: SQL
+kind: SQLClaim
 metadata:
   name: my-db
   annotations:
     organization: DevOps Toolkit
     author: Viktor Farcic <viktor@farcic.com>
 spec:
-  id: my-db-20240115000456
+  id: my-db
   compositionSelector:
     matchLabels:
-      provider: azure
+      provider: google
       db: postgresql
   parameters:
-    version: "11"
+    version: "13"
     size: small
