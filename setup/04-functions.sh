@@ -256,7 +256,7 @@ gum spin --spinner dot \
     --title "Waiting for Crossplane providers..." -- sleep 60
 
 kubectl wait --for=condition=healthy provider.pkg.crossplane.io \
-    --all --timeout=600s
+    --all --timeout=1800s
 
 kubectl apply --filename providers/$HYPERSCALER-config.yaml
 

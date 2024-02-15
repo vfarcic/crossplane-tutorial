@@ -58,3 +58,13 @@ fi
 #########################
 
 kind delete cluster
+
+##################
+# Commit Changes #
+##################
+
+git add .
+
+git commit -m "Chapter end"
+
+git push
