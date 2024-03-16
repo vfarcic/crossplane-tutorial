@@ -183,7 +183,7 @@ spec:
   id: cluster01
   compositionSelector:
     matchLabels:
-      provider: azure-official
+      provider: azure
       cluster: aks
   parameters:
     nodeSize: small
@@ -204,7 +204,7 @@ spec:
   id: $DB_NAME
   compositionSelector:
     matchLabels:
-      provider: azure-official
+      provider: azure
       db: postgresql
   parameters:
     version: \"11\"

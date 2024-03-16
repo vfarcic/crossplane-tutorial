@@ -7,7 +7,7 @@ spec:
   id: cluster-01
   compositionSelector:
     matchLabels:
-      provider: aws-official
+      provider: aws
       cluster: eks
   parameters:
     nodeSize: small
@@ -28,7 +28,7 @@ spec:
   id: silly-demo-db
   compositionSelector:
     matchLabels:
-      provider: aws-official
+      provider: aws
       db: postgresql
   parameters:
     version: "13"
