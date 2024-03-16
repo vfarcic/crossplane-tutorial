@@ -33,6 +33,8 @@ spec:
   parameters:
     version: "11"
     size: small
+    databases:
+      - silly-demo-db
 ---
 apiVersion: devopstoolkitseries.com/v1alpha1
 kind: AppClaim
