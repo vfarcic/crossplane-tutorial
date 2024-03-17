@@ -119,7 +119,7 @@ elif [[ "$HYPERSCALER" == "aws" ]]; then
     AWS_ACCOUNT_ID=$(gum input --placeholder "AWS Account ID" \
         --value "$AWS_ACCOUNT_ID")
     echo "export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> .env
-f
+
     echo "[default]
 aws_access_key_id = $AWS_ACCESS_KEY_ID
 aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
