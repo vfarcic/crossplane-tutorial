@@ -12,7 +12,6 @@
     upbound
     teller
     crossplane-cli
-    teller
     kubernetes-helm
   ];
 }
