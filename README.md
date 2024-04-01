@@ -24,6 +24,11 @@ Full playlist: <https://youtube.com/playlist?list=PLyicRj904Z99i8U5JaNW5X3AyBvfQ
 - Video: <https://youtu.be/ompdPvaHn0U?si=A_7GAZTRdFNN01A8>
 - Gist: <https://gist.github.com/vfarcic/3f4f9bf05c937b9f12e6bcb43f3c0bc7>
 
+### Part 5
+
+- Video: <https://www.youtube.com/watch?v=XSzKs97Ls4g>
+- Gist: <https://gist.github.com/vfarcic/9ae7abe89ebab199aa6e52a364e01edc>
+
 ## Resources
 
 - Crossplane: <https://crossplane.io>
