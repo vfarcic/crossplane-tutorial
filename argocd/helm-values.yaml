@@ -1,3 +1,5 @@
+global:
+  domain: argocd.127.0.0.1.nip.io
 configs:
   secret:
     argocdServerAdminPassword: "$2a$10$m3eTlEdRen0nS86c5Zph5u/bDFQMcWZYdG3NVdiyaACCqoxLJaz16"
@@ -11,9 +13,5 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hosts:
-      - argocd.127.0.0.1.nip.io
   extraArgs:
     - --insecure
-
-
