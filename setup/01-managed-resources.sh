@@ -76,14 +76,14 @@ if [ "$HYPERSCALER" = "google" ]; then
 
     gcloud projects create ${PROJECT_ID}
 
-    open "https://console.cloud.google.com/billing/linkedaccount?project=$PROJECT_ID"
+    echo "## Open https://console.cloud.google.com/billing/linkedaccount?project=$PROJECT_ID and link a billing account" \
+        | gum format
 
-    echo "## LINK A BILLING ACCOUNT" | gum format
     gum input --placeholder "Press the enter key to continue."
 
-    open "https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=$PROJECT_ID"
+    echo "## Open https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=$PROJECT_ID and *ENABLE* the API" \
+        | gum format
 
-    echo "## ENABLE the API" | gum format
     gum input --placeholder "Press the enter key to continue."
 
     export SA_NAME=devops-toolkit
