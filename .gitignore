@@ -7,3 +7,4 @@
 /azure-creds.json
 /bin
 /kubeconfig.yaml
+/.direnv
