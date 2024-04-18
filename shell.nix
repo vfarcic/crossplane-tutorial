@@ -1,5 +1,6 @@
-{ pkgs ? import <nixpkgs> {} }:pkgs.mkShell {
-  packages = with pkgs; [
+{pkgs ? import <nixpkgs> {}}:
+pkgs.mkShell {
+  buildInputs = with pkgs; [
     gum
     gh
     kind
