@@ -65,6 +65,54 @@
         }
       }
     },
+    "bat@0.24.0": {
+      "last_modified": "2024-04-19T17:36:04-04:00",
+      "resolved": "github:NixOS/nixpkgs/92d295f588631b0db2da509f381b4fb1e74173c5#bat",
+      "source": "devbox-search",
+      "version": "0.24.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/y5ivqqi6qsrl1cx43bzjx54lwzmn5nlq-bat-0.24.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/y5ivqqi6qsrl1cx43bzjx54lwzmn5nlq-bat-0.24.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/6in98qzmj5hzgjvxwickh7wpaaamn8cc-bat-0.24.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/6in98qzmj5hzgjvxwickh7wpaaamn8cc-bat-0.24.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/y1lkjqzbdl7vsr2fpwgf95nngg4vaikb-bat-0.24.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/y1lkjqzbdl7vsr2fpwgf95nngg4vaikb-bat-0.24.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/8iafkixj71qgpkiwp1alwsf3y10g50mi-bat-0.24.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/8iafkixj71qgpkiwp1alwsf3y10g50mi-bat-0.24.0"
+        }
+      }
+    },
     "crossplane-cli@1.15.1": {
       "last_modified": "2024-03-22T07:26:23-04:00",
       "resolved": "github:NixOS/nixpkgs/a3ed7406349a9335cb4c2a71369b697cecd9d351#crossplane-cli",

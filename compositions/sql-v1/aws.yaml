@@ -207,7 +207,7 @@ spec:
           instanceClass: db.m5.large
           username: masteruser
           engine: postgres
-          engineVersion: "15.3"
+          engineVersion: "16.2"
           skipFinalSnapshot: true
           publiclyAccessible: true
           allocatedStorage: 200

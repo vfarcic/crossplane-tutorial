@@ -1,6 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.10.5/.schema/devbox.schema.json",
   "packages": [
+    "bat@0.24.0",
     "kind@0.22.0",
     "kubernetes-helm@3.14.3",
     "kubectl@1.29.3",
@@ -12,6 +13,7 @@
   ],
   "shell": {
     "init_hook": [
+      "alias cat='bat --paging never --theme DarkNeon --style plain'",
       "PS1=\"➜ \""
     ],
     "scripts": {}
