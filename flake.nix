@@ -2,16 +2,8 @@
   description = "A development environment for vfarcic's Crossplane Tutorial";
 
   inputs = {
-    # This is just a dummy example illustrating how to pin
-    # to multiple nixpkgs versions while not actually doing so.
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # If the following line's comment were toggled with the one
-    # above, then pkgs below would be pinned to nixos-23.11 instead.
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
-    # However, currently both nixpkgs and nixpkgs-unstable are pinned
-    # to nixos-unstable.
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # This enables support for all default systems declared at
     # https://github.com/nix-systems/default/blob/main/default.nix
     systems.url = "github:nix-systems/default";
     flake-utils = {
@@ -46,7 +38,7 @@
 
         devShells = {
           default = pkgs.mkShell {
-            buildInputs = with pkgs; [
+            buildInputs = with pkgs_unstable; [
               gum
               gh
               kind
@@ -61,9 +53,9 @@
               azure-cli
               upbound
               teller
-              pkgs_unstable.crossplane-cli
+              crossplane-cli
               kubernetes-helm
-              pkgs_unstable.kyverno-chainsaw
+              kyverno-chainsaw
             ];
           };
         };
