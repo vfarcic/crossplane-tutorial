@@ -10,7 +10,8 @@
     "teller@1.5.6",
     "yq-go@4.43.1",
     "crossplane-cli@1.15.1",
-    "azure-cli@2.60.0"
+    "azure-cli@2.60.0",
+    "viddy@0.4.0"
   ],
   "shell": {
     "init_hook": [
