@@ -158,7 +158,7 @@ else
 apiVersion: v1
 kind: Secret
 metadata:
-  name: $DB_NAME-password
+  name: my-db-password
 data:
   password: T1QrOXZQcDhMdXhoeFVQWVpLSk1kUG1YM04xTzBTd3YzWG5ZVjI0UFZzcz0=
 ---
