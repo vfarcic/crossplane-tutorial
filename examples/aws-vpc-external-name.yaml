@@ -1,0 +1,11 @@
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: VPC
+metadata:
+  name: my-vpc
+  annotations:
+    crossplane.io/external-name: vpc-0ed16d160e9a9d6ac
+spec:
+  forProvider:
+    region: us-east-1
+    cidrBlock: 10.0.0.0/16

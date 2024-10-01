@@ -1,0 +1,16 @@
+---
+apiVersion: compute.gcp.upbound.io/v1beta1
+kind: Instance
+metadata:
+  name: my-vm
+spec:
+  forProvider:
+    zone: us-east1-b
+    machineType: e2-micro
+    bootDisk:
+      - initializeParams:
+          - image: debian-cloud/debian-12
+    networkInterface:
+      - network: default
+    desiredStatus: RUNNING
+    allowStoppingForUpdate: true
